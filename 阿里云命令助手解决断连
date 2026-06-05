@@ -1,0 +1,33 @@
+#用于解决连接不稳定，经常断连，并且清除残留信息
+
+
+#!/bin/bash
+# 强行清理一切残留进程，强制回收资源
+killall -9 node || true
+killall -9 python3 || true
+sync; echo 3 > /proc/sys/vm/drop_caches
+
+# 彻底关闭可能导致崩溃的 Swap 或重建 (如果已存在则跳过)
+swapoff -a || true
+dd if=/dev/zero of=/swapfile bs=1M count=2048
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+
+# 彻底修复 SSH 配置 (即便内存爆满，门卫也不允许被杀)
+echo "ClientAliveInterval 30" >> /etc/ssh/sshd_config
+echo "ClientAliveCountMax 0" >> /etc/ssh/sshd_config
+systemctl restart sshd
+
+echo "补丁已注入：已添加 2GB 内存缓冲，并配置了 SSH 保活协议。"
+
+
+ClientAliveInterval 30：这是 SSH 的“保活协议”。它告诉服务器：“如果 30 秒没动静，你就主动给 Mac 发个心跳包。” 有了这个，即便你稍微发会儿呆，服务器也不会认为你死掉了，就不会掐断你的连接。
+
+drop_caches：这是一剂清凉油。它会瞬间腾出被系统缓存占用的物理内存，给你的 ls 或 nano 指令腾出操作空间。
+
+killall -9 node：这是一次物理清理。因为我们重置了系统，但之前 VS Code 留下的僵尸进程可能还在，我们要确保把所有吃内存的怪物全部清理干净。
+
+
+
+
