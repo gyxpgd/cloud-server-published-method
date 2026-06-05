@@ -1,0 +1,41 @@
+bash
+#在终端先与云服务器建立连接：
+
+ssh root@47.79.38.110
+#更稳定一点的用这个
+ssh -o ServerAliveInterval=15 root@47.79.38.110
+
+#配置python环境：
+
+#确保系统包索引是最新的
+apt update 
+#安装 Python 的下载器 pip
+apt install python3-pip -y
+
+#下载所有所需模组：
+
+#这行命令的末尾加了阿里云的国内极速镜像源，这能确保即使东京机房的网络有波动，也能在几秒钟内 100% 下载成功并装好
+pip3 install pandas numpy yfinance backtrader -i https://mirrors.aliyun.com/pypi/simple/
+
+#创建文件夹并进入：
+
+mkdir -p /root/quant_bot && cd /root/quant_bot
+
+#mkdir：全称是 make directory（制造目录/创建文件夹）。后面的 -p 相当于一个保险机制，意思是“如果这个文件夹已经存在了，也别报错，直接忽略就行”。
+#&&：在极客的世界里，这个符号代表“紧接着执行”。它完美地把两个动作连在了一起。
+#cd：全称是 change directory（切换目录/进入文件夹）。
+
+#查看文件夹内容（列出）：
+
+ls
+
+#在文件夹内新建文件，并在其中写代码：
+
+nano Data_Factor.py
+nano strategy.py
+nano main.py
+
+#运行python文件
+
+python3 main.py
+
