@@ -1,0 +1,15 @@
+
+#使main.py挂机运行并把输出结果传到run.log上
+nohup python3 -u main_slow.py > run.log 2>&1 &
+
+#查看当前的输出结果
+tail -f run.log
+
+#查看文件所占空间
+ls -lh run.log
+
+#结束所有python进程
+pkill -f python3
+
+#查看文件的运行状态
+ps -ef | grep main_slow.py
